@@ -76,7 +76,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit">确认</el-button>
-          <el-button>取消</el-button>
+          <el-button @click="handleClose">取消</el-button>
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -171,11 +171,12 @@ export default {
       this.isShowDrawer = true;
     },
     // 关闭抽屉
-    handleClose(done) {
+    handleClose() {
       // this.isShowDrawer = false;
       this.$confirm("确认关闭？")
         .then((_) => {
-          done();
+          // done();
+          this.closeDrawer();
         })
         .catch((_) => {});
     },
@@ -193,11 +194,16 @@ export default {
         //5、重新获取列表数据
         this.initData();
         //6、关闭抽屉
-        this.isShowDrawer = false;
+        this.closeDrawer();
       } catch (e) {
         console.log(e);
       }
     },
+    // 关闭抽屉，重置表单
+    closeDrawer() {
+      this.isShowDrawer = false;
+      this.$refs.form.resetFields();
+    }
   },
 };
 </script>
