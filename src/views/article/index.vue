@@ -64,15 +64,18 @@
       direction="rtl"
       size="50%"
     >
-      <el-form ref="form" label-width="80px" :rules="rules">
+      <el-form ref="form" :model="form" label-width="80px" :rules="rules">
         <el-form-item label="标题" prop="stem">
           <el-input v-model="form.stem" placeholder="输入面经标题"></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="content">
-          <quill-editor @blur="$refs.form.validateField('content')"  v-model="form.content"></quill-editor>
+          <quill-editor
+            @blur="$refs.form.validateField('content')"
+            v-model="form.content"
+          ></quill-editor>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">确认</el-button>
+          <el-button type="primary" @click="submit">确认</el-button>
           <el-button>取消</el-button>
         </el-form-item>
       </el-form>
@@ -81,13 +84,13 @@
 </template>
 
 <script>
-import { getArticleList } from "@/api/article";
+import { createArticle, getArticleList } from "@/api/article";
 // require styles
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
 
-import { quillEditor } from 'vue-quill-editor'
+import { quillEditor } from "vue-quill-editor";
 export default {
   name: "article-page",
   components: {
@@ -112,12 +115,20 @@ export default {
       },
       rules: {
         stem: [
-          {required:true,message:'请输入标题',trigger:['blur','change']}
+          {
+            required: true,
+            message: "请输入标题",
+            trigger: "blur",
+          },
         ],
         content: [
-          {required:true,message:'请输入内容',trigger:['blur','change']}
-        ]
-      }
+          {
+            required: true,
+            message: "请输入内容",
+            trigger: ["blur", "change"],
+          },
+        ],
+      },
     };
   },
   created() {
@@ -167,6 +178,25 @@ export default {
           done();
         })
         .catch((_) => {});
+    },
+    // 确定按钮
+    async submit() {
+      try {
+        // 1、表单校验
+        await this.$refs.form.validate();
+        // 2、发起创建面经请求
+        await createArticle(this.form);
+        // 3、提示用户信息
+        this.$message.success("添加成功");
+        // 4、返回第一页
+        this.current = 1;
+        //5、重新获取列表数据
+        this.initData();
+        //6、关闭抽屉
+        this.isShowDrawer = false;
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
 };
