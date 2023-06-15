@@ -64,12 +64,12 @@
       direction="rtl"
       size="50%"
     >
-      <el-form ref="form" label-width="80px">
+      <el-form ref="form" label-width="80px" :rules="rules">
         <el-form-item label="标题" prop="stem">
           <el-input v-model="form.stem" placeholder="输入面经标题"></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="content">
-          <quill-editor v-model="form.content"></quill-editor>
+          <quill-editor @blur="$refs.form.validateField('content')"  v-model="form.content"></quill-editor>
         </el-form-item>
         <el-form-item>
           <el-button type="primary">确认</el-button>
@@ -110,6 +110,14 @@ export default {
         stem: "",
         content: "",
       },
+      rules: {
+        stem: [
+          {required:true,message:'请输入标题',trigger:['blur','change']}
+        ],
+        content: [
+          {required:true,message:'请输入内容',trigger:['blur','change']}
+        ]
+      }
     };
   },
   created() {
