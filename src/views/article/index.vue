@@ -39,7 +39,10 @@
                 @click="openDrawer('edit', row.id)"
                 class="el-icon-edit-outline"
               ></i>
-              <i class="el-icon-delete" @click="del(row.id)"></i>
+              <el-popconfirm title="您确定要删除吗？" @confirm="del(row.id)">
+                <i slot="reference" class="el-icon-delete"></i>
+              </el-popconfirm>
+              <!-- <i class="el-icon-delete" @click="del(row.id)"></i> -->
             </div>
           </template>
         </el-table-column>
@@ -253,12 +256,11 @@ export default {
         stem: "",
         content: "",
       };
-      if (this.type !== 'preview') { // 只有 add edit 调用 resetFields 在此处的作用: 重置校验状态
+      if (this.type !== "preview") {
+        // 只有 add edit 调用 resetFields 在此处的作用: 重置校验状态
         this.$refs.form.resetFields();
       }
       this.isShowDrawer = false;
-
-
     },
   },
 };
@@ -312,4 +314,6 @@ export default {
     margin: 0 0 20px 0;
   }
 }
+
+
 </style>
