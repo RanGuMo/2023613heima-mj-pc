@@ -1,24 +1,29 @@
 # 2023613heima-mj-pc
 
-## Project setup
+## Project setup 安装依赖
+
 ```
-yarn install
+pnpm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development 启动项目
+
 ```
-yarn serve
+npm run serve
 ```
 
 ### Compiles and minifies for production
+
 ```
-yarn build
+npm run build
 ```
 
 ### Lints and fixes files
+
 ```
-yarn lint
+npm run lint
 ```
 
 ### Customize configuration
+
 See [Configuration Reference](https://cli.vuejs.org/config/).
