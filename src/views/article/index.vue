@@ -284,6 +284,17 @@ export default {
       color: rgba(114, 124, 245, 1);
       cursor: pointer;
     }
+    span i{
+      font-size: 18px;
+      display: flex;
+      justify-content: space-around;
+      color: #666;
+    }
+    span i:hover {
+
+      color: rgba(114, 124, 245, 1);
+      cursor: pointer;
+    }
   }
 }
 .el-pagination {
@@ -314,6 +325,4 @@ export default {
     margin: 0 0 20px 0;
   }
 }
-
-
 </style>
