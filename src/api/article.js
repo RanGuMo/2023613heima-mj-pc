@@ -28,3 +28,9 @@ export const getArticleDetail = id => {
     }
   })
 }
+
+// 更新面经
+export const updateArticle = data => {
+  return request.put('/admin/interview/update', data)
+}
+

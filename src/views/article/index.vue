@@ -64,7 +64,17 @@
       direction="rtl"
       size="50%"
     >
-      <el-form ref="form" :model="form" label-width="80px" :rules="rules">
+      <div v-if="type === 'preview'" class="article-preview">
+        <h5>{{ form.stem }}</h5>
+        <div v-html="form.content"></div>
+      </div>
+      <el-form
+        v-else
+        ref="form"
+        :model="form"
+        label-width="80px"
+        :rules="rules"
+      >
         <el-form-item label="标题" prop="stem">
           <el-input v-model="form.stem" placeholder="输入面经标题"></el-input>
         </el-form-item>
@@ -89,6 +99,7 @@ import {
   getArticleList,
   removeArticle,
   getArticleDetail,
+  updateArticle,
 } from "@/api/article";
 // require styles
 import "quill/dist/quill.core.css";
@@ -199,17 +210,30 @@ export default {
         })
         .catch((_) => {});
     },
-    // 确定按钮
+    // 确定按钮 （添加和修改公用）
     async submit() {
       try {
         // 1、表单校验
         await this.$refs.form.validate();
-        // 2、发起创建面经请求
-        await createArticle(this.form);
-        // 3、提示用户信息
-        this.$message.success("添加成功");
-        // 4、返回第一页
-        this.current = 1;
+        if (this.type == "add") {
+          // 2、发起创建面经请求
+          await createArticle(this.form);
+          // 3、提示用户信息
+          this.$message.success("添加成功");
+          // 4、返回第一页
+          this.current = 1;
+        } else if (this.type == "edit") {
+          const { id, stem, content } = this.form;
+          // 2、发起修改面经请求
+          await updateArticle({
+            id,
+            stem,
+            content,
+          });
+          // 3、提示用户信息
+          this.$message.success("修改成功");
+        }
+
         //5、重新获取列表数据
         this.initData();
         //6、关闭抽屉
@@ -220,13 +244,21 @@ export default {
     },
     // 关闭抽屉，重置表单
     closeDrawer() {
-      this.isShowDrawer = false;
-      this.$refs.form.resetFields();
-      // form 表单重置
+      // 注意点: 由于公用的抽屉, 当预览时, 是没有表单的! 不能重置表单
+      // 但是form的值还在, 会影响添加 => 需要手动重置一下
+      // 关闭时将表单内容重置
+
+      // 无论是哪种情况, 一律将form手动数据清零
       this.form = {
         stem: "",
         content: "",
       };
+      if (this.type !== 'preview') { // 只有 add edit 调用 resetFields 在此处的作用: 重置校验状态
+        this.$refs.form.resetFields();
+      }
+      this.isShowDrawer = false;
+
+
     },
   },
 };
