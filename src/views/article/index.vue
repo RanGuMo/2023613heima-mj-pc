@@ -84,7 +84,12 @@
 </template>
 
 <script>
-import { createArticle, getArticleList } from "@/api/article";
+import {
+  createArticle,
+  getArticleList,
+  removeArticle,
+  getArticleDetail,
+} from "@/api/article";
 // require styles
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
@@ -155,8 +160,14 @@ export default {
       this.total = res.data.total;
     },
     // 删除
-    del(id) {
-      console.log(id);
+    async del(id) {
+      await removeArticle(id);
+      this.$message.success("删除成功");
+      //  如果当前页只有一条数据，且不是第一页，返回上一页
+      if (this.list.length === 1 && this.current > 1) {
+        this.current--;
+      }
+      this.initData();
     },
     // 处理当前页变化
     handleCurrentChange(val) {
@@ -165,10 +176,18 @@ export default {
       this.initData();
     },
     // 打开抽屉
-    openDrawer(type, id) {
+    async openDrawer(type, id) {
       // console.log(type, id);
       this.type = type;
       this.isShowDrawer = true;
+      //除了添加面经外，其余两种情况都需要获取面经详情
+      // 发请求获取面经详情
+      if (type !== "add") {
+        const res = await getArticleDetail(id);
+        this.form = {
+          ...res.data,
+        };
+      }
     },
     // 关闭抽屉
     handleClose() {
@@ -203,7 +222,12 @@ export default {
     closeDrawer() {
       this.isShowDrawer = false;
       this.$refs.form.resetFields();
-    }
+      // form 表单重置
+      this.form = {
+        stem: "",
+        content: "",
+      };
+    },
   },
 };
 </script>
